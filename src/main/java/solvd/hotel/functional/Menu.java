@@ -5,9 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
-
 import org.apache.log4j.Logger;
-
 import solvd.hotel.room.Receive;
 import solvd.hotel.room.Room;
 import solvd.hotel.room.TypeRoom;
@@ -22,16 +20,20 @@ public class Menu {
 	
 	public void createMenu() {
 		Creator list = new Creator();
-		list.readFileAndConvertToPOJO();
+		
 		boolean menu=true;
 		Room room = new Room();
 		TypeRoom typeRoom = new TypeRoom();
 		Receive receive = new Receive();
+		DateController dateCont = new DateController();
+		Date date =new Date();
 		do {
+			list.readFileAndConvertToPOJO();
 			System.out.println("Print number");
 			System.out.println("1.Add Room");
 			System.out.println("2.Print All Rooms");
 			System.out.println("3.Delete Room");
+			System.out.println("4.Cancel the reservation");
 			Scanner scaner = new Scanner(System.in);
 			Scanner scanner = new Scanner(System.in);
 			int choice = scaner.nextInt();
@@ -48,28 +50,30 @@ public class Menu {
 				room.setPrice(scaner.nextInt());
 				System.out.println("Enter receive Room(yes/no)");
 				String answer = scanner.nextLine();
-				if ("no".equals(answer)) {
+				switch(answer) {
+				case "no":{
 					receive.setReceive(false);
-					receive.setData(null);
-				} if("yes".equals(answer)) {
-					receive.setReceive(true);
-					System.out.println("Enter data receive Room(dd/MM/yyyy)");
-					String date = scanner.nextLine();
-					Date data = null;
-					try {
-						data = new SimpleDateFormat("dd/MM/yyyy").parse(date);
-		
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						LOGGER.error("Date Type incorect");
-						e.printStackTrace();
-					}
-					receive.setData(data);
-					
-					
-				}else{
-					LOGGER.error("Incorect value");
+					receive.setDataCheckIn(date);
+					receive.setDataCheckOut(date);
+					break;
 				}
+				case "yes":{
+//					
+					dateCont.inputDate();
+					if(dateCont.getUsed()) {
+					receive.setReceive(true);
+
+					receive.setDataCheckIn(dateCont.getDateCheckIn());
+					receive.setDataCheckOut(dateCont.getDateCheckOut());}
+					
+					break;
+					
+				}
+				default:
+					LOGGER.error("Incorect value");
+					break;
+				}
+				
 				room.setReceive(receive);
 				room.setTypeRoom(typeRoom);
 				list.addRoom(room);
@@ -88,6 +92,13 @@ public class Menu {
 				list.printInfo();
 				list.addListToJson();
 				break;
+			case 4:
+				System.out.println("Enter the room number:");
+				int numberRoom =  scaner.nextInt();
+				dateCont.inputDate();
+				list.cancelReceivedRoom(numberRoom, dateCont.getDateCheckIn(), dateCont.getDateCheckOut());
+				list.addListToJson();
+				break;
 			default:
 				menu=false;
 				break;
@@ -95,4 +106,5 @@ public class Menu {
 			}	
 		} while(menu);
 	}
+
 }

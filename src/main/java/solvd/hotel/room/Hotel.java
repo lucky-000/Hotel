@@ -3,7 +3,7 @@ package solvd.hotel.room;
 public abstract class Hotel{
 	private String title;
 	public Hotel() {
-		title="default";
+		title="MyHotel";
 	}
 	public Hotel(String title) {
 		this.title=title;

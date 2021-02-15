@@ -6,13 +6,15 @@ public class Receive {
 	private boolean  receive;
 
 //	 Data data;
-	 private Date data = null;
+	 private Date dataCheckOut = new Date();
+	 private Date dataCheckIn = new Date();
 	public Receive() {
 		
 	}
-	public Receive(boolean receive, Date data ) {
+	public Receive(boolean receive, Date dataCheckIn, Date dataCheckOut ) {
 		this.receive=receive;
-		this.data=data;
+		this.dataCheckIn=dataCheckIn;
+		this.dataCheckOut=dataCheckOut;
 
 	}
 	public void setReceive(boolean receive) {
@@ -22,10 +24,16 @@ public class Receive {
 		return receive;
 	}
 
-	public void setData(Date data) {
-		this.data=data;
+	public void setDataCheckIn(Date dataCheckIn) {
+		this.dataCheckIn=dataCheckIn;
 	}
-	public Date getData() {
-		return data;
+	public Date getDataCheckIn() {
+		return dataCheckIn;
+	}
+	public void setDataCheckOut(Date dataCheckOut) {
+		this.dataCheckOut=dataCheckOut;
+	}
+	public Date getDataCheckOut() {
+		return dataCheckOut;
 	}
 }
