@@ -1,5 +1,7 @@
 package solvd.hotel.room;
 
+import java.util.Comparator;
+
 public class Room extends Hotel{
 	private int numberRoom;
 	private int countBed;
@@ -46,4 +48,15 @@ public class Room extends Hotel{
 	public Receive getReceive() {
 		return receive;
 	}
+	
+	public static Comparator<Room> sortByNumberRoom = new Comparator<Room>() {
+		public int compare(Room room1, Room room2) {
+			int numRoom1=room1.getNumberRoom();
+			int numRoom2=room2.getNumberRoom();
+			return numRoom1-numRoom2;
+		}
+		
+	};
+		
+	
 }

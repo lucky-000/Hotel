@@ -3,6 +3,7 @@ package solvd.hotel.functional;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -46,16 +47,34 @@ import solvd.hotel.utils.JsonConverter;
 		
 	}
 	public void printInfoForUser() {
-		
-		for(Room room: content) {
-			
-			System.out.println (" Title Hotel: "+room.getTitle()
-					+" numberRoom: "+room.getNumberRoom()
-					+" countBed: "+room.getCountBed()
-					+" typeRoom: "+room.getTypeRoom().getTypeRoom()
-					+" price: "+room.getPrice());
-			
+
+		ArrayList<Room> newList = new  ArrayList<>(content);
+		Collections.sort(newList, Room.sortByNumberRoom);		
+		for (int i = 0; i < newList.size()-1; i++) {
+	
+			for (int j = 1; j < newList.size()-1; j++) {
+				if((newList.get(i).getNumberRoom())
+						<(newList.get(j).getNumberRoom())) {
+					System.out.println (" Title Hotel: "+newList.get(i).getTitle()
+					+" numberRoom: "+newList.get(i).getNumberRoom()
+					+" countBed: "+newList.get(i).getCountBed()
+					+" typeRoom: "+newList.get(i).getTypeRoom().getTypeRoom()
+					+" price: "+newList.get(i).getPrice());
+					i=j;
+					break;
+				}
+				
+			}
 		}
+		System.out.println (" Title Hotel: "+newList.get(newList.size()-1).getTitle()
+				+" numberRoom: "+newList.get(newList.size()-1).getNumberRoom()
+				+" countBed: "+newList.get(newList.size()-1).getCountBed()
+				+" typeRoom: "+newList.get(newList.size()-1).getTypeRoom().getTypeRoom()
+				+" price: "+newList.get(newList.size()-1).getPrice());
+
+		
+		
+		
 	}
 	public void delRoom(int index) {
 		content.remove(index);
@@ -108,28 +127,37 @@ import solvd.hotel.utils.JsonConverter;
 	}
 	public void cancelReceivedRoom(int numberRoom, Date dateCheckIn, Date dateCheckOut) {
 		Receive receive = new Receive();
+		boolean isCheck=false;
+		int index = 0;
 		for(Room room: content) {
 			if(numberRoom == room.getNumberRoom()
 					&dateCheckIn.equals(room.getReceive().getDataCheckIn())&
 					dateCheckOut.equals(room.getReceive().getDataCheckOut())) {
-				receive.setDataCheckIn(room.getReceive().getDataCheckIn());
-				receive.setDataCheckOut(room.getReceive().getDataCheckOut());
-				receive.setReceive(false);
-				room.setReceive(receive);
-				LOGGER.info("Reservation canceled ");
+				index=content.indexOf(room);
+				isCheck=true;
+				break;
+				
 			}
 			
 		}
+		if(isCheck) {
+			receive.setDataCheckIn(content.get(index).getReceive().getDataCheckIn());
+			receive.setDataCheckOut(content.get(index).getReceive().getDataCheckOut());
+			receive.setReceive(false);
+			content.get(index).setReceive(receive);
+			LOGGER.info("Reservation canceled ");
+		}else {
+			LOGGER.info("Record not found ");
+		}	
 	}
 	public void receivedRoomDateCheck(int numberRoom, Date dateCheckIn, Date dateCheckOut ) {
-		boolean a1=false;
-		boolean a2=false;
+		boolean checkDateIn=false;
+		boolean checkDateOut=false;
 		int check = 0;
 		Room roomNew = new Room();
 		Receive receive = new Receive();
 		for(Room room: content) {
 			if(numberRoom == room.getNumberRoom()) {
-//				roomNew=room;
 				roomNew.setCountBed(room.getCountBed());
 				roomNew.setNumberRoom(room.getNumberRoom());
 				roomNew.setPrice(room.getPrice());
@@ -148,10 +176,10 @@ import solvd.hotel.utils.JsonConverter;
 					
 					if(dateCheckIn.before(room.getReceive().getDataCheckIn())|
 							(dateCheckIn.after(room.getReceive().getDataCheckOut()))) {
-						a1=false;
+						checkDateIn=false;
 					}else{
 						LOGGER.error("You cannot book on this date(CheckIn)");
-						a1=true;
+						checkDateIn=true;
 						break;
 						}
 				}
@@ -160,19 +188,18 @@ import solvd.hotel.utils.JsonConverter;
 			
 			for(Room room: content) {		
 				if((numberRoom == room.getNumberRoom())&(room.getReceive().getReceive())) {
-					roomNew=room;
 					if(dateCheckOut.after(room.getReceive().getDataCheckOut())|
 							(dateCheckOut.before(room.getReceive().getDataCheckIn()))) {
-						a2=false;
+						checkDateOut=false;
 					}else {
 						LOGGER.error("You cannot book on this date(CheckOut)");
-						a2=true;
+						checkDateOut=true;
 						break;}
 				}
 				
 			}
 			
-			if(a1|a2) {
+			if(checkDateIn|checkDateOut) {
 				LOGGER.error("You cannot book on this date");
 				LOGGER.error("Select other dates");
 			}else {
@@ -181,7 +208,6 @@ import solvd.hotel.utils.JsonConverter;
 				receive.setDataCheckOut(dateCheckOut);
 				receive.setReceive(true);
 				roomNew.setReceive(receive);
-//				content.add(roomNew);
 				addRoom(roomNew);
 				LOGGER.info("You have reserved");
 			}		

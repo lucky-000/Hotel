@@ -3,7 +3,7 @@ package solvd.hotel.room;
 import java.util.Date;
 
 public class Receive {
-	private boolean  receive;
+	private boolean  isReceive=false;
 
 //	 Data data;
 	 private Date dataCheckOut = new Date();
@@ -11,17 +11,17 @@ public class Receive {
 	public Receive() {
 		
 	}
-	public Receive(boolean receive, Date dataCheckIn, Date dataCheckOut ) {
-		this.receive=receive;
+	public Receive(boolean isReceive, Date dataCheckIn, Date dataCheckOut ) {
+		this.isReceive=isReceive;
 		this.dataCheckIn=dataCheckIn;
 		this.dataCheckOut=dataCheckOut;
 
 	}
-	public void setReceive(boolean receive) {
-		this.receive=receive;	
+	public void setReceive(boolean isReceive) {
+		this.isReceive=isReceive;	
 	}
 	public boolean getReceive() {
-		return receive;
+		return isReceive;
 	}
 
 	public void setDataCheckIn(Date dataCheckIn) {

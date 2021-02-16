@@ -51,8 +51,8 @@ public class MenuForUsers {
 				
 				break;
 			case 3:
-//				list.printInfoForUser();
-				list.printInfo();
+				list.printInfoForUser();
+
 				break;
 
 			default:
